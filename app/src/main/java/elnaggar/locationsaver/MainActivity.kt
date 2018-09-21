@@ -18,17 +18,22 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import elnaggar.locationsaver.dummy.DummyContent
+import android.widget.Toast
 
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.add_location_dialog.*
 import kotlinx.android.synthetic.main.add_location_dialog.view.*
 
 class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInteractionListener, LocationListener {
+    override fun onListFragmentInteraction(item: elnaggar.locationsaver.Location?) {
+        val clipboardManager = getSystemService(Activity.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboardManager.primaryClip = ClipData.newPlainText("location", item.toString())
+    }
+
     private var location: Location? = null
 
     override fun onLocationChanged(location: Location?) {
         this.location = location
+        Toast.makeText(this,"We Got Locations",Toast.LENGTH_SHORT).show()
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
@@ -40,10 +45,6 @@ class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInterac
     override fun onProviderDisabled(provider: String?) {
     }
 
-    override fun onListFragmentInteraction(item: DummyContent.Location?) {
-        val clipboardManager = getSystemService(Activity.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboardManager.primaryClip = ClipData.newPlainText("location", item.toString())
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,14 +68,19 @@ class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInterac
 
             val dialog = AlertDialog.Builder(this@MainActivity).setView(view).create()
             addLocation.setOnClickListener {
-                val location = DummyContent.Location()
-                location.title = name.text.toString()
-                location.latitude = lat.text.toString()
-                location.longitude = long.text.toString()
                 val database = getDatabase()
-                database.locationDao().insert(location)
-                (supportFragmentManager.fragments[0] as LocationFragment).itemAdded()
-                dialog.dismiss()
+                if (name.text.toString() == "") {
+                    Toast.makeText(this, "Location Is Empty", Toast.LENGTH_SHORT).show()
+                } else {
+                    val location = Location()
+                    location.title = name.text.toString()
+                    location.latitude = lat.text.toString()
+                    location.longitude = long.text.toString()
+                    database.locationDao().insert(location)
+                    (supportFragmentManager.fragments[0] as LocationFragment).itemAdded()
+                    dialog.dismiss()
+                }
+
 
             }
             dialog.show()
@@ -83,21 +89,6 @@ class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInterac
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
 
     fun getDatabase(): AppDatabase {
         return Room.databaseBuilder(this@MainActivity

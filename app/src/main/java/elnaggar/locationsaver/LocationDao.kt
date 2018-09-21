@@ -2,20 +2,19 @@ package elnaggar.locationsaver
 
 
 import android.arch.persistence.room.*
-import elnaggar.locationsaver.dummy.DummyContent
 
 @Dao
 interface LocationDao {
 
     @get:Query("SELECT * FROM location")
-    val all: List<DummyContent.Location>
+    val all: List<Location>
 
 
     @Delete
-    fun delete(location: DummyContent.Location)
+    fun delete(location:Location)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(location: DummyContent.Location)
+    fun insert(location: Location)
 
 
 }

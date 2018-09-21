@@ -8,7 +8,6 @@ import android.widget.TextView
 
 
 import elnaggar.locationsaver.LocationFragment.OnListFragmentInteractionListener
-import elnaggar.locationsaver.dummy.DummyContent.Location
 
 import kotlinx.android.synthetic.main.location_list_item.view.*
 
@@ -52,8 +51,6 @@ class MyLocationRecyclerViewAdapter(
     }
 
     override fun getItemCount(): Int = mValues.size
-    fun delete(adapterPosition: Int) {
-    }
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mTitleView: TextView = mView.tv_name

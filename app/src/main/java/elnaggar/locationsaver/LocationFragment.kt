@@ -12,8 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-import elnaggar.locationsaver.dummy.DummyContent
-import elnaggar.locationsaver.dummy.DummyContent.Location
 import android.support.v7.widget.helper.ItemTouchHelper
 
 
@@ -84,7 +82,7 @@ class LocationFragment : Fragment() {
         return database.locationDao().all
     }
 
-    fun delete(item: DummyContent.Location) {
+    fun delete(item:Location) {
         val database: AppDatabase = (activity as MainActivity).getDatabase()
         database.locationDao().delete(item)
 
