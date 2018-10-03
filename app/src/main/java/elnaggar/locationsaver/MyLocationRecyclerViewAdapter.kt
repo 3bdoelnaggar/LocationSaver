@@ -11,11 +11,6 @@ import elnaggar.locationsaver.LocationFragment.OnListFragmentInteractionListener
 
 import kotlinx.android.synthetic.main.location_list_item.view.*
 
-/**
- * [RecyclerView.Adapter] that can display a [Location] and makes a call to the
- * specified [OnListFragmentInteractionListener].
- * TODO: Replace the implementation with code for your data type.
- */
 class MyLocationRecyclerViewAdapter(
         private val mValues: List<Location>,
         private val mListener: OnListFragmentInteractionListener?)

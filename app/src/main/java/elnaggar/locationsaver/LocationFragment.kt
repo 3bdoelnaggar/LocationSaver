@@ -5,14 +5,14 @@ import android.graphics.Canvas
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-import android.support.v7.widget.helper.ItemTouchHelper
+import kotlinx.android.synthetic.main.fragment_location_list.*
 
 
 /**
@@ -22,36 +22,25 @@ import android.support.v7.widget.helper.ItemTouchHelper
  */
 class LocationFragment : Fragment() {
 
-    // TODO: Customize parameters
-    private var columnCount = 1
 
     private var listener: OnListFragmentInteractionListener? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
-        }
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_location_list, container, false)
-        val locationAdapter = MyLocationRecyclerViewAdapter(getItems(), listener)
+
+        return inflater.inflate(R.layout.fragment_location_list, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        list.layoutManager=LinearLayoutManager(context)
+        val mValues = getItems()
+        val locationAdapter = MyLocationRecyclerViewAdapter(mValues, listener)
 
         // Set the adapter
-        if (view is RecyclerView) {
-            with(view) {
 
-                layoutManager = when {
-                    columnCount <= 1 -> LinearLayoutManager(context)
-                    else -> GridLayoutManager(context, columnCount)
-                }
-                adapter = locationAdapter
-                addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
-            }
-        }
+        list.adapter = locationAdapter
+        list.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
 
 
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -63,7 +52,7 @@ class LocationFragment : Fragment() {
                 // Row is swiped from recycler view
                 // remove it from adapter
                 delete(getItems()[viewHolder.adapterPosition])
-                (view as RecyclerView).adapter = MyLocationRecyclerViewAdapter(getItems(), listener)
+                list.adapter = MyLocationRecyclerViewAdapter(getItems(), listener)
 
             }
 
@@ -73,8 +62,8 @@ class LocationFragment : Fragment() {
         }
 
 // attaching the touch helper to recycler view
-        ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(view as RecyclerView)
-        return view
+        ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(list)
+        list.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
     }
 
     private fun getItems(): List<Location> {
@@ -82,7 +71,7 @@ class LocationFragment : Fragment() {
         return database.locationDao().all
     }
 
-    fun delete(item:Location) {
+    fun delete(item: Location) {
         val database: AppDatabase = (activity as MainActivity).getDatabase()
         database.locationDao().delete(item)
 
@@ -104,21 +93,10 @@ class LocationFragment : Fragment() {
     }
 
     fun itemAdded() {
-        (view as RecyclerView).adapter = MyLocationRecyclerViewAdapter(getItems(), listener)
+        list.adapter = MyLocationRecyclerViewAdapter(getItems(), listener)
 
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson
-     * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
     interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         fun onListFragmentInteraction(item: Location?)
@@ -126,16 +104,9 @@ class LocationFragment : Fragment() {
 
     companion object {
 
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
 
         // TODO: Customize parameter initialization
         @JvmStatic
-        fun newInstance(columnCount: Int) =
-                LocationFragment().apply {
-                    arguments = Bundle().apply {
-                        putInt(ARG_COLUMN_COUNT, columnCount)
-                    }
-                }
+        fun newInstance() = LocationFragment()
     }
 }

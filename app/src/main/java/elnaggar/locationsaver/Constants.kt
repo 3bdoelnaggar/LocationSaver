@@ -1,4 +1,4 @@
-package elnaggar.alexandriarestaurants.db
+package elnaggar.locationsaver
 
 class Constants {
     companion object {

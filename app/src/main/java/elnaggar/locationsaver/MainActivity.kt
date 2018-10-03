@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -19,11 +20,42 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.LocationSource
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.add_location_dialog.view.*
 
-class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInteractionListener, LocationListener {
+
+private const val LOG_TAG = "ElnaggarApp"
+
+class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInteractionListener, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,com.google.android.gms.location.LocationListener {
+    override fun onConnected(p0: Bundle?) {
+        mLocationsRequest=LocationRequest.create()
+        mLocationsRequest!!.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+        mLocationsRequest!!.interval=1000
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,mLocationsRequest,this)
+
+    }
+
+    override fun onConnectionSuspended(p0: Int) {
+        Log.d(LOG_TAG,"onConnectionSuspended")
+    }
+
+    override fun onConnectionFailed(p0: ConnectionResult) {
+        Log.e(LOG_TAG,"onConnectionFailed")
+    }
+
+
+    private var mLocationsRequest: LocationRequest? = null
+    private var mGoogleApiClient: GoogleApiClient? = null
+
+
     override fun onListFragmentInteraction(item: elnaggar.locationsaver.Location?) {
         val clipboardManager = getSystemService(Activity.CLIPBOARD_SERVICE) as ClipboardManager
         clipboardManager.primaryClip = ClipData.newPlainText("location", item.toString())
@@ -33,7 +65,7 @@ class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInterac
 
     override fun onLocationChanged(location: Location?) {
         this.location = location
-        Toast.makeText(this,"We Got Locations",Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "We Got Locations", Toast.LENGTH_SHORT).show()
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
@@ -50,10 +82,9 @@ class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInterac
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10L, 0f, this@MainActivity)
-
+        mGoogleApiClient = GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API).addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).build()
         fab.setOnClickListener { _ ->
             val view = LayoutInflater.from(this@MainActivity).inflate(R.layout.add_location_dialog, null)
             val name: EditText = view.et_locationName
@@ -87,6 +118,20 @@ class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInterac
 
 
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (mGoogleApiClient != null)
+            mGoogleApiClient!!.connect()
+    }
+
+    override fun onStop() {
+        if (mGoogleApiClient != null)
+            mGoogleApiClient!!.disconnect()
+        super.onStop()
+
+
     }
 
 
