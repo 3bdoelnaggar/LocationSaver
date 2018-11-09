@@ -15,6 +15,8 @@ import com.google.android.gms.location.LocationServices
 const val CONNECTION_TO_GOOGLE_ADI_SUSPENDED = 3
 const val CONNECTION_TO_GOOGLE_ADI_FAILED = 4
 const val GPS_NOT_ENABLED: Int = 2
+const val LOCATION_NOT_AVAILABLE: Int=1
+
 
 
 class LocationController(private val locationSubscriber: LocationSubscriber, val context: Context) : GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener, GpsStatus.Listener {

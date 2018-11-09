@@ -2,7 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/mi_add_on_map"
-        android:title="@string/from_map"
+        android:id="@+id/mi_googleMap"
+        android:title="@string/from_google_map"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/mi_hereMap"
+        android:title="@string/from_here_map"
         app:showAsAction="ifRoom" />
 </menu>

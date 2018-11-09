@@ -17,13 +17,15 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.add_location_dialog.view.*
 
 
 private const val LOG_TAG = "ElnaggarApp"
+const val LOCATION_REQUEST = 123
 
-class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInteractionListener, LocationController.LocationSubscriber {
+class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInteractionListener, SingletonLocationController.LocationSubscriber {
     override fun onGetLocation(location: Location) {
         this.location = location
 
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInterac
     override fun onError(type: Int) {
         when (type) {
             GPS_NOT_ENABLED -> Snackbar.make(fab, "GPS NOT ENABLED", Snackbar.LENGTH_SHORT).show()
+            LOCATION_NOT_AVAILABLE -> Snackbar.make(fab, "LOCATIONS_NOT_AVAILABLE", Snackbar.LENGTH_SHORT).show()
         }
 
     }
@@ -49,7 +52,8 @@ class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInterac
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        mLocationController = LocationController(this, this)
+        mLocationController = SingletonLocationController.getInstance()
+        mLocationController?.requestLocation(this, this)
         fab.setOnClickListener {
             createAddLocationDialog()
         }
@@ -94,12 +98,16 @@ class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInterac
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.mi_add_on_map -> startActivityForResult(Intent(this, HereMapActivity::class.java), LOCATION_REQUEST)
+            R.id.mi_googleMap -> {
+                startActivityForResult(Intent(this, MapsActivity::class.java), LOCATION_REQUEST)
+            }
+            R.id.mi_hereMap -> {
+                startActivityForResult(Intent(this, HereMapActivity::class.java), LOCATION_REQUEST)
+            }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private val LOCATION_REQUEST = 123
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -109,16 +117,10 @@ class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInterac
         }
     }
 
-    private var mLocationController: LocationController? = null
-
-    override fun onStart() {
-        super.onStart()
-        mLocationController?.requestLocation()
-
-    }
+    private var mLocationController: SingletonLocationController? = null
 
     override fun onStop() {
-        mLocationController?.disconnect()
+        mLocationController?.removeListener()
         super.onStop()
 
 

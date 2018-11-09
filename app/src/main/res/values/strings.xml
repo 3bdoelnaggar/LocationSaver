@@ -3,4 +3,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_maps">Map</string>
     <string name="from_map">من على الخريطة</string>
+    <string name="from_google_map">google map</string>
+    <string name="from_here_map">here map</string>
 </resources>
