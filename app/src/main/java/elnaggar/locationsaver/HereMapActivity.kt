@@ -6,6 +6,7 @@ import android.location.Location
 import android.location.LocationManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.here.android.mpa.common.GeoCoordinate
 import com.here.android.mpa.common.OnEngineInitListener
@@ -22,12 +23,14 @@ class HereMapActivity : AppCompatActivity(), OnEngineInitListener, SingletonLoca
     private fun moveCameraToPosition(location: Location) {
         map?.setCenter(GeoCoordinate(location.latitude,
                 location.longitude), Map.Animation.NONE)
-        map?.zoomLevel = map!!.maxZoomLevel-1
+        map?.zoomLevel = map!!.maxZoomLevel-2
     }
     private fun moveCameraToPosition(location: LatLng) {
         map?.setCenter(GeoCoordinate(location.latitude,
                 location.longitude), Map.Animation.NONE)
-        map?.zoomLevel = map!!.maxZoomLevel
+        map?.zoomLevel = map!!.maxZoomLevel-2
+
+
     }
     override fun onError(type: Int) {
     }
@@ -61,6 +64,8 @@ class HereMapActivity : AppCompatActivity(), OnEngineInitListener, SingletonLoca
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         locationController = SingletonLocationController.getInstance()
+        Log.d("instanceid","" + System.identityHashCode(locationController))
+
         setContentView(R.layout.activity_here_map)
         mapFragment = fragmentManager.findFragmentById(R.id.mapfragment) as MapFragment
         // initialize the Map Fragment and

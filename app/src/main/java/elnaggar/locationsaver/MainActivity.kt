@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -53,6 +54,8 @@ class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInterac
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         mLocationController = SingletonLocationController.getInstance()
+        Log.d("instanceid","" + System.identityHashCode(mLocationController))
+
         mLocationController?.requestLocation(this, this)
         fab.setOnClickListener {
             createAddLocationDialog()

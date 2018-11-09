@@ -7,6 +7,7 @@ import android.location.LocationManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.util.Log
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -64,6 +65,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCamera
         mMap = googleMap
         mMap.setOnCameraIdleListener(this)
         lc = SingletonLocationController.getInstance()
+        Log.d("instanceid","" + System.identityHashCode(lc))
         lc?.requestLocation(this, this)
         mMap.setOnMapClickListener(this)
         moveCameraToMyLocation(ALEXANDRIA_LOCATION)
