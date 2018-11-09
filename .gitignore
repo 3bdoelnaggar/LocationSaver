@@ -8,5 +8,5 @@
 /build
 /captures
 .externalNativeBuild
-/app/src/debug/res/values/google_maps_api.xml
-/app/src/main/res/values/here_maps_api.xml
+/home/elnaggar/AndroidStudioProjects/LocationSaver/app/src/debug/res/values/google_maps_api.xml
+/home/elnaggar/AndroidStudioProjects/LocationSaver/app/src/main/res/values/here_maps_api.xml
