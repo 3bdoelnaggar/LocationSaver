@@ -15,6 +15,10 @@ import com.here.android.mpa.mapping.MapFragment
 import kotlinx.android.synthetic.main.activity_here_map.*
 
 class HereMapActivity : AppCompatActivity(), OnEngineInitListener, SingletonLocationController.LocationSubscriber {
+    override fun onLocationStateChanged(isOne: Boolean) {
+    }
+
+
     override fun onGetLocation(location: Location) {
         moveCameraToPosition(location)
         locationController?.removeListener()

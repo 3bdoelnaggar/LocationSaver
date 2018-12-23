@@ -17,9 +17,14 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import elnaggar.locationsaver.R.id.btn_confirmLocation
 import kotlinx.android.synthetic.main.activity_maps.*
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCameraIdleListener, LocationController.LocationSubscriber, GoogleMap.OnMapClickListener, SingletonLocationController.LocationSubscriber {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnCameraIdleListener, GoogleMap.OnMapClickListener, SingletonLocationController.LocationSubscriber {
+    override fun onLocationStateChanged(isOne: Boolean) {
+    }
+
+
     private var mLocation: Location? = null
 
     override fun onMapClick(p0: LatLng?) {

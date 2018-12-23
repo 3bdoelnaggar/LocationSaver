@@ -27,6 +27,14 @@ private const val LOG_TAG = "ElnaggarApp"
 const val LOCATION_REQUEST = 123
 
 class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInteractionListener, SingletonLocationController.LocationSubscriber {
+    override fun onLocationStateChanged(isOne: Boolean) {
+        when (isOne) {
+            true -> Snackbar.make(fab, "LOCATIONS_IS_ON", Snackbar.LENGTH_SHORT).show()
+            false -> Snackbar.make(fab, "LOCATIONS_IS_OFF", Snackbar.LENGTH_SHORT).show()
+
+        }
+    }
+
     override fun onGetLocation(location: Location) {
         this.location = location
 
@@ -54,7 +62,7 @@ class MainActivity : AppCompatActivity(), LocationFragment.OnListFragmentInterac
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         mLocationController = SingletonLocationController.getInstance()
-        Log.d("instanceid","" + System.identityHashCode(mLocationController))
+        Log.d("instanceid", "" + System.identityHashCode(mLocationController))
 
         mLocationController?.requestLocation(this, this)
         fab.setOnClickListener {
